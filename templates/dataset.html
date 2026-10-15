@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dataset Management{% endblock %}
+
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-database"></i> Dataset management</h3>
+
+{% if not is_staff %}
+<div class="alert alert-info">
+  <i class="bi bi-info-circle"></i>
+  You can browse the dataset, but uploading training images and starting a
+  training run require an administrator account.
+  <a href="/admin/login/" class="alert-link">Log in</a>
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-header">Activity classes</div>
+      <ul class="list-group list-group-flush" id="classList">
+        {% for c in classes %}
+        <li class="list-group-item d-flex justify-content-between align-items-center"
+            data-class="{{ c.name }}">
+          <span><i class="bi bi-folder2"></i> {{ c.name }}</span>
+          <span class="badge bg-primary rounded-pill">{{ c.count }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">No classes yet.</li>
+        {% endfor %}
+      </ul>
+      <div class="card-footer text-muted small">
+        Total images: <strong>{{ total_images }}</strong> &middot;
+        Folder: <code>ml/dataset/</code>
+      </div>
+    </div>
+
+    {% if is_staff %}
+    <div class="card shadow-sm mt-3">
+      <div class="card-header">Add a new activity class</div>
+      <div class="card-body">
+        <div class="input-group">
+          <input type="text" id="newClassName" class="form-control" placeholder="e.g. waving">
+          <button class="btn btn-outline-primary" id="btnCreateClass">Create</button>
+        </div>
+        <div id="classMsg" class="small mt-2"></div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-7">
+    {% if is_staff %}
+    <div class="card shadow-sm">
+      <div class="card-header">Upload training images</div>
+      <div class="card-body">
+        <label class="form-label">Target activity class</label>
+        <select id="uploadClass" class="form-select mb-3">
+          {% for c in classes %}<option value="{{ c.name }}">{{ c.name }}</option>{% endfor %}
+        </select>
+        <input type="file" id="datasetFiles" class="form-control" accept="image/*" multiple>
+        <button id="btnUploadDataset" class="btn btn-primary mt-3">
+          <i class="bi bi-upload"></i> Upload images
+        </button>
+        <div id="datasetMsg" class="small mt-2"></div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm mt-3">
+      <div class="card-header">Model training</div>
+      <div class="card-body">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-5">
+            <label class="form-label small">Model</label>
+            <select id="trainModel" class="form-select">
+              <option value="mobilenetv2">MobileNetV2 (transfer learning)</option>
+              <option value="efficientnet">EfficientNetB0</option>
+              <option value="cnn">Custom CNN</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small">Epochs</label>
+            <input type="number" id="trainEpochs" class="form-control" value="10" min="1" max="100">
+          </div>
+          <div class="col-md-4">
+            <button id="btnTrain" class="btn btn-success w-100" {% if not is_staff %}disabled{% endif %}>
+              <i class="bi bi-play-circle"></i> Start training
+            </button>
+          </div>
+        </div>
+        <div id="trainMsg" class="small mt-2"></div>
+      </div>
+      <ul class="list-group list-group-flush" id="runList">
+        {% for r in runs %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ r.get_model_type_display }} &middot; {{ r.epochs }} epochs</span>
+          <span class="badge bg-secondary">{{ r.status }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">No training runs yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/dataset.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}About &amp; AI Concepts{% endblock %}
+
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-info-circle"></i> About this project</h3>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5>What it does</h5>
+        <p class="text-muted">
+          The platform captures frames from a webcam (PC) or a phone camera, sends them
+          to a convolutional neural network, and reports the most likely human activity
+          together with a confidence score. Results are stored, charted and optionally
+          announced by the browser's speech synthesiser.
+        </p>
+
+        <h5 class="mt-4">What it does <em>not</em> do</h5>
+        <p class="text-muted">
+          It only classifies <strong>movement</strong>. It never infers gender, race,
+          ethnicity, religion, health status or any other sensitive attribute, and it
+          does not perform face recognition.
+        </p>
+
+        <h5 class="mt-4">Architecture</h5>
+        <pre class="arch-diagram">Camera (WebRTC)
+   ↓
+Capture frame (canvas → JPEG)
+   ↓
+Django REST API  /api/predict/
+   ↓
+Preprocessing (resize 224×224, x/255)
+   ↓
+CNN / MobileNetV2 / EfficientNetB0
+   ↓
+Softmax → activity + confidence
+   ↓
+Database (Prediction) → Dashboard + History + Voice</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="accordion" id="aiAccordion">
+      {% for term, explanation in ai_terms %}
+      {% empty %}
+      {% endfor %}
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c1">Convolution</button>
+        </h2>
+        <div id="c1" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            <code>Z = X * K + b</code><br>
+            A small filter <em>K</em> (the kernel, e.g. 3&times;3) slides over the image.
+            At every position it multiplies the overlapping pixels and sums them,
+            producing one number in the output feature map. Early filters learn edges,
+            later filters learn body shapes such as arms or legs.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c2">Weights &amp; Bias</button>
+        </h2>
+        <div id="c2" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            <strong>Weights</strong> are the numbers inside every filter. <strong>Bias</strong>
+            is a constant added after the convolution. Both are learned automatically by
+            gradient descent &mdash; nobody writes them by hand.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c3">ReLU</button>
+        </h2>
+        <div id="c3" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            <code>ReLU(x) = max(0, x)</code><br>
+            Negative values become zero, positives pass through unchanged. This cheap
+            non-linearity lets the network stack many layers and learn complex patterns.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c4">Pooling</button>
+        </h2>
+        <div id="c4" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            Max pooling takes the largest value in each 2&times;2 block. The feature map
+            shrinks, computation drops and the network becomes slightly tolerant to small
+            shifts in position.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c5">Softmax</button>
+        </h2>
+        <div id="c5" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            <code>P(class_i) = e^z_i / Σ e^z_j</code><br>
+            Turns raw scores into probabilities that sum to 1. This is what produces the
+            "94 % walking" number you see on screen.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c6">Loss, Backpropagation, Gradient Descent</button>
+        </h2>
+        <div id="c6" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            The <strong>loss function</strong> (categorical cross-entropy,
+            <code>L = -Σ y_i log p_i</code>) measures how wrong the prediction is.
+            <strong>Backpropagation</strong> applies the chain rule to compute the gradient
+            <code>dL/dW</code> for every weight. <strong>Gradient descent</strong> then nudges
+            each weight: <code>W ← W − lr · dL/dW</code>. Repeat for many epochs.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c7">Accuracy, Precision, Recall, F1</button>
+        </h2>
+        <div id="c7" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            <strong>Accuracy</strong> = correct / total.<br>
+            <strong>Precision</strong> = TP / (TP + FP) &mdash; when we say "running", how often are we right?<br>
+            <strong>Recall</strong> = TP / (TP + FN) &mdash; of all real "running" moments, how many did we catch?<br>
+            <strong>F1</strong> = 2 · P · R / (P + R) &mdash; a single balanced score.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c8">Transfer Learning</button>
+        </h2>
+        <div id="c8" class="accordion-collapse collapse" data-bs-parent="#aiAccordion">
+          <div class="accordion-body">
+            MobileNetV2 was already trained on 1.2 million ImageNet photos. Its early
+            layers know edges, corners and textures. We freeze those layers and only train
+            a new classifier head for our 7 activities. Result: high accuracy with a small
+            dataset and training that finishes in minutes instead of days.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

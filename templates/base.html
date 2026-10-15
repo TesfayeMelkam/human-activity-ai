@@ -1,0 +1,114 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <title>{% block title %}AI Human Activity Recognition{% endblock %}</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top app-navbar">
+  <div class="container">
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
+       href="{% url 'activity:home' %}">
+      <span class="brand-dot"></span> ActivityAI
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNav" aria-controls="mainNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'activity:home' %}"><i class="bi bi-house"></i> Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'activity:camera' %}"><i class="bi bi-camera-video"></i> Live Camera</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'activity:upload' %}"><i class="bi bi-cloud-arrow-up"></i> Upload</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'activity:dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'activity:history' %}"><i class="bi bi-clock-history"></i> History</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'activity:dataset' %}"><i class="bi bi-database"></i> Dataset</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'activity:about' %}"><i class="bi bi-info-circle"></i> About</a></li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-2">
+        <button id="themeToggle" class="btn btn-sm btn-outline-secondary" title="Toggle dark mode">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+        {% if user.is_authenticated %}
+          <a class="btn btn-sm btn-outline-primary" href="/admin/"><i class="bi bi-shield-lock"></i> Admin</a>
+        {% else %}
+          <a class="btn btn-sm btn-outline-primary" href="/admin/login/"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+  {% if error_message %}
+    <div class="alert alert-warning">{{ error_message }}</div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="app-footer">
+  <div class="container d-flex flex-wrap justify-content-between gap-2">
+    <span>&copy; {% now "Y" %} ActivityAI &mdash; Computer-vision demo</span>
+    <span class="text-muted small">
+      Classifies movement only. No gender, race, ethnicity or religion is inferred.
+    </span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ---- Dark / light mode ------------------------------------------------
+  (function () {
+    const html = document.documentElement;
+    const saved = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-bs-theme", saved);
+    const btn = document.getElementById("themeToggle");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        const next = html.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-bs-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    }
+  })();
+
+  // ---- Shared fetch helper with CSRF ------------------------------------
+  window.getCookie = function (name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  };
+
+  window.apiFetch = async function (url, options = {}) {
+    const opts = Object.assign({ headers: {} }, options);
+    opts.headers["X-CSRFToken"] = window.getCookie("csrftoken") || "";
+    if (!(opts.body instanceof FormData) && opts.body) {
+      opts.headers["Content-Type"] = "application/json";
+    }
+    const response = await fetch(url, opts);
+    let payload = null;
+    try { payload = await response.json(); } catch (e) { payload = null; }
+    if (!response.ok) {
+      const message = (payload && (payload.error || JSON.stringify(payload))) || response.statusText;
+      throw new Error(message);
+    }
+    return payload;
+  };
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

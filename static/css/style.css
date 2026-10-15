@@ -1,0 +1,131 @@
+:root {
+  --brand: #4f46e5;
+  --brand-2: #06b6d4;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+}
+
+[data-bs-theme="dark"] {
+  --surface: #16181d;
+  --surface-2: #1d2027;
+}
+
+body {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(79, 70, 229, 0.10), transparent),
+    radial-gradient(900px 400px at 90% 0%, rgba(6, 182, 212, 0.10), transparent),
+    var(--surface-2);
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+}
+
+/* ---------- Navbar ---------- */
+.app-navbar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+[data-bs-theme="dark"] .app-navbar {
+  background: rgba(22, 24, 29, 0.85);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.brand-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  display: inline-block;
+}
+
+/* ---------- Hero ---------- */
+.hero { padding: 3rem 1rem 1rem; }
+.text-gradient {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.badge-soft {
+  background: rgba(79, 70, 229, 0.12);
+  color: var(--brand);
+  padding: 0.5rem 1rem;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  background: var(--surface);
+}
+[data-bs-theme="dark"] .card { border-color: rgba(255, 255, 255, 0.08); }
+
+.feature-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+.feature-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: grid; place-items: center; font-size: 1.5rem; color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+}
+
+.activity-pill {
+  background: rgba(6, 182, 212, 0.14);
+  color: #0891b2;
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+}
+
+/* ---------- Camera ---------- */
+.camera-card { overflow: hidden; }
+.camera-video {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+}
+.camera-overlay {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+}
+
+/* ---------- Stat cards ---------- */
+.stat-card { border-left: 4px solid var(--brand); }
+.stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: #94a3b8; }
+.stat-value { font-size: 1.7rem; font-weight: 700; }
+.stat-mini { padding: 0.5rem; border-radius: 10px; background: var(--surface-2); }
+.stat-mini-value { font-weight: 700; font-size: 1rem; }
+.stat-mini-label { font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; }
+
+/* ---------- Upload ---------- */
+.drop-zone {
+  border: 2px dashed rgba(79, 70, 229, 0.35);
+  border-radius: 14px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.drop-zone.dragover { background: rgba(79, 70, 229, 0.08); }
+
+/* ---------- Misc ---------- */
+.arch-diagram {
+  background: var(--surface-2);
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.app-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 1.25rem 0;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}
+[data-bs-theme="dark"] .app-footer { border-top-color: rgba(255,255,255,0.08); }
+
+@media (max-width: 576px) {
+  .hero { padding-top: 1.5rem; }
+  .display-5 { font-size: 1.9rem; }
+  .stat-value { font-size: 1.3rem; }
+}

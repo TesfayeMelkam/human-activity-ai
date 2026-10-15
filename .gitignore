@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/uploads/
+
+# Environment / secrets   ← MOST IMPORTANT PART
+.env
+.env.local
+.env.*.local
+
+# ML artefacts
+ml/models/*.keras
+ml/models/*.h5
+ml/dataset/**/*.jpg
+ml/dataset/**/*.jpeg
+ml/dataset/**/*.png
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store

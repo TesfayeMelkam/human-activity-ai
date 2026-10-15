@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Upload &amp; Predict{% endblock %}
+
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-cloud-arrow-up"></i> Upload an image</h3>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <label for="imageInput" class="form-label">Choose an image (JPG, PNG, WEBP &mdash; max 8 MB)</label>
+        <input class="form-control" type="file" id="imageInput" accept="image/*">
+        <div class="form-text">The file is validated, resized to 224&times;224, normalised (x/255) and sent to the model.</div>
+
+        <div id="dropZone" class="drop-zone mt-3">
+          <i class="bi bi-image display-4 text-muted"></i>
+          <p class="mb-0 text-muted">Drag &amp; drop an image here</p>
+        </div>
+
+        <button id="btnUploadPredict" class="btn btn-primary w-100 mt-3" disabled>
+          <i class="bi bi-magic"></i> Predict activity
+        </button>
+
+        <div id="uploadError" class="alert alert-danger mt-3 d-none"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header"><i class="bi bi-image"></i> Preview &amp; result</div>
+      <div class="card-body text-center">
+        <img id="preview" class="img-fluid rounded mb-3 d-none" alt="Uploaded preview" style="max-height: 320px;">
+
+        <div id="uploadResult" class="d-none">
+          <div class="display-6 fw-bold text-gradient" id="uploadActivity">—</div>
+          <div class="progress mt-3" style="height: 22px;">
+            <div id="uploadConfidenceBar" class="progress-bar bg-success" style="width: 0%">0%</div>
+          </div>
+          <p class="text-muted mt-3 mb-0">
+            Processing time: <strong id="uploadTime">—</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/audio.js' %}"></script>
+<script src="{% static 'js/upload.js' %}"></script>
+{% endblock %}

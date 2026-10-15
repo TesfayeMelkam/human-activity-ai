@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Live Camera{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm camera-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-record-circle text-danger"></i> Live Camera</span>
+        <span id="cameraStatus" class="badge bg-secondary">Stopped</span>
+      </div>
+      <div class="card-body p-2 position-relative">
+        <video id="video" playsinline autoplay muted class="camera-video"></video>
+        <div id="videoOverlay" class="camera-overlay d-none">
+          <div class="spinner-border text-light" role="status"></div>
+        </div>
+        <canvas id="canvas" class="d-none"></canvas>
+      </div>
+      <div class="card-footer d-flex flex-wrap gap-2">
+        <button id="btnStart" class="btn btn-success"><i class="bi bi-play-fill"></i> Start</button>
+        <button id="btnStop" class="btn btn-outline-danger" disabled><i class="bi bi-stop-fill"></i> Stop</button>
+        <button id="btnPredict" class="btn btn-primary" disabled><i class="bi bi-magic"></i> Predict</button>
+        <button id="btnSwitch" class="btn btn-outline-secondary" disabled><i class="bi bi-arrow-repeat"></i> Switch Camera</button>
+        <div class="form-check form-switch ms-auto align-self-center">
+          <input class="form-check-input" type="checkbox" id="autoPredict" checked>
+          <label class="form-check-label" for="autoPredict">Auto</label>
+        </div>
+      </div>
+    </div>
+
+    <div id="cameraError" class="alert alert-danger mt-3 d-none"></div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-header"><i class="bi bi-activity"></i> Prediction</div>
+      <div class="card-body text-center">
+        <div id="activityLabel" class="display-6 fw-bold text-gradient">—</div>
+        <div class="text-muted mb-3" id="activityHint">Press Start, then Predict</div>
+
+        <div class="progress mb-2" style="height: 22px;">
+          <div id="confidenceBar" class="progress-bar bg-success"
+               role="progressbar" style="width: 0%">0%</div>
+        </div>
+
+        <div class="row text-center mt-3">
+          <div class="col-6">
+            <div class="stat-mini">
+              <div class="stat-mini-value" id="processingTime">—</div>
+              <div class="stat-mini-label">Processing</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-mini">
+              <div class="stat-mini-value" id="modelName">—</div>
+              <div class="stat-mini-label">Model</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="uncertainBadge" class="alert alert-warning mt-3 mb-0 d-none py-2">
+          <i class="bi bi-question-circle"></i> Low confidence &mdash; reported as <strong>uncertain</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-3">
+      <div class="card-header"><i class="bi bi-volume-up"></i> Voice feedback</div>
+      <div class="card-body">
+        <div class="form-check form-switch mb-2">
+          <input class="form-check-input" type="checkbox" id="voiceEnabled">
+          <label class="form-check-label" for="voiceEnabled">Enable voice</label>
+        </div>
+        <label class="form-label small mb-1">Volume</label>
+        <input type="range" class="form-range" id="voiceVolume" min="0" max="1" step="0.1" value="1">
+        <label class="form-label small mb-1">Speech rate</label>
+        <input type="range" class="form-range" id="voiceRate" min="0.5" max="2" step="0.1" value="1">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/audio.js' %}"></script>
+<script src="{% static 'js/camera.js' %}"></script>
+<script src="{% static 'js/prediction.js' %}"></script>
+{% endblock %}
